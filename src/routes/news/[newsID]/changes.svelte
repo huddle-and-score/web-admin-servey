@@ -10,8 +10,10 @@
 	$: newsCaption = news.content
 		.map((x) => {
 			if (x.type === 'text') return x.text;
-			if (x.type === 'team') return '@' + $event.teams[x.teamID].acronym;
-			return '@' + $event.players[x.playerID].team.acronym + $event.players[x.playerID].jerseyNum;
+			if (x.type === 'team') return '@' + ($event.teams[x.teamID]?.acronym ?? x.teamID);
+			const player = $event.players[x.playerID];
+			if (!player) return '@' + x.playerID;
+			return '@' + player.team.acronym + player.jerseyNum;
 		})
 		.join('');
 

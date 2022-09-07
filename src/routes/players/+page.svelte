@@ -2,7 +2,7 @@
 	import { event } from '$lib/state';
 </script>
 
-<h1 class="text-2xl underline">Teams</h1>
+<h1 class="text-2xl underline">Players</h1>
 
 <a
 	class="w-full cursor-pointer block mt-3 border-2 border-gray-700 border-dashed rounded-xl p-3 text-xl"

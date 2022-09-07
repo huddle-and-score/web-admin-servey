@@ -1,60 +1,24 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import { page } from '$app/stores';
-	import { event } from '$lib/state';
 	import { setTeam } from '$lib/db';
-	import Slider from '$lib/Slider.svelte';
-	import { onMount } from 'svelte';
-	import type ColorPickerClass from 'svelte-awesome-color-picker';
+	import { event } from '$lib/state';
+	import Profile from './profile.svelte';
 	$: teamID = $page.params.teamID;
 	$: team = $event.teams[teamID];
-
 	let loading = false;
 	let err: any;
-	let color = '#000000';
-	let logo: FileList | undefined;
-	$: logoErr = (logo?.length ?? 0) > 1;
-	let name = '';
-	$: nameErr = !name;
-	let teamChemistry = 42;
-	let acronym = '';
-	$: acronymErr = !/^[A-Za-z]{3}$/.test(acronym);
-	$: ok =
-		!logoErr &&
-		!nameErr &&
-		!acronymErr &&
-		!loading &&
-		(logo?.length == 1 ||
-			name !== team.name ||
-			color !== team.color ||
-			acronym !== team.acronym ||
-			teamChemistry !== team.teamChemistry);
-
-	let ColorPicker: typeof ColorPickerClass;
-
-	onMount(function () {
-		import('svelte-awesome-color-picker').then((res) => (ColorPicker = res.default));
-		color = team.color;
-		name = team.name;
-		teamChemistry = team.teamChemistry;
-		acronym = team.acronym;
-	});
-
-	async function updateTeam() {
-		loading = true;
+	async function deleteTeam() {
+		if (!confirm('Are you sure, this will delete the object. Once deleted cant be recovered'))
+			return;
 		try {
-			await setTeam(teamID, {
-				logo: logo?.[0] ?? team.logo,
-				color,
-				name,
-				teamChemistry,
-				acronym: acronym.toLocaleUpperCase()
-			});
-			logo = undefined;
+			await setTeam(teamID, null);
+			goto('/teams');
 		} catch (e) {
 			err = e;
-			console.error(e);
+			console.log(e);
 		}
-		loading = false;
 	}
 </script>
 
@@ -75,46 +39,7 @@
 			<div>TeamID: “{teamID}”</div>
 		</div>
 	</div>
-	{#if ColorPicker}
-		<div class="field">
-			<label for="color">Team Color</label>
-			<svelte:component this={ColorPicker} id="color" bind:hex={color} />
-		</div>
-	{/if}
-	<form on:submit|preventDefault={updateTeam}>
-		<div class="field">
-			<label for="logo">Team Logo</label>
-			<input bind:files={logo} id="logo" type="file" />
-			{#if logoErr}
-				<p class="err">Select a Logo</p>
-			{/if}
-		</div>
-		<div class="field">
-			<label for="name">Team Name</label>
-			<input bind:value={name} id="name" />
-			{#if nameErr}
-				<p class="err">Enter a Name</p>
-			{/if}
-		</div>
-		<div class="field">
-			<label for="acronym">Team Acronym</label>
-			<input bind:value={acronym} id="acronym" />
-			{#if acronymErr}
-				<p class="err">Enter a Acronym of 3 letters</p>
-			{/if}
-		</div>
-		<div class="field">
-			<label for="team-chemistry" class="flex justify-between">
-				<span>Team Chemistry</span>
-				<span>{teamChemistry}%</span>
-			</label>
-			<Slider bind:value={teamChemistry} id="team-chemistry" />
-		</div>
-		<div class="err">
-			{err ?? ''}
-		</div>
-		<button disabled={!ok} type="submit"> {loading ? 'Loading...' : 'Submit'} </button>
-	</form>
+	<Profile />
 	<a
 		class="w-full cursor-pointer block mt-3 border-2 border-gray-700 border-dashed rounded-xl p-3 text-xl"
 		href="/players/__"
@@ -148,3 +73,11 @@
 		</a>
 	{/each}
 {/if}
+<button
+	disabled={loading}
+	on:click={deleteTeam}
+	class="p-3 disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 text-white rounded-lg w-full my-5 text-2xl"
+>
+	{loading ? 'Loading...' : 'Delete'}
+</button>
+<p class="err">{err ?? ''}</p>

@@ -1,10 +1,26 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import { page } from '$app/stores';
+	import { setPlayer } from '$lib/db';
 	import { event } from '$lib/state';
 	import Profile from './profile.svelte';
 	import Stats from './stats.svelte';
 	$: playerID = $page.params.playerID;
 	$: player = $event.players[playerID];
+	let loading = false;
+	let err: any;
+	async function deletePlayer() {
+		if (!confirm('Are you sure, this will delete the object. Once deleted cant be recovered'))
+			return;
+		try {
+			await setPlayer(playerID, null);
+			goto('/players');
+		} catch (e) {
+			err = e;
+			console.log(e);
+		}
+	}
 </script>
 
 {#if !player}
@@ -34,4 +50,12 @@
 	</div>
 	<Profile />
 	<Stats />
+	<button
+		disabled={loading}
+		on:click={deletePlayer}
+		class="p-3 disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 text-white rounded-lg w-full my-5 text-2xl"
+	>
+		{loading ? 'Loading...' : 'Delete'}
+	</button>
+	<p class="err">{err ?? ''}</p>
 {/if}

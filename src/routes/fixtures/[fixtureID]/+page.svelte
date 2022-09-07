@@ -1,10 +1,26 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import { page } from '$app/stores';
+	import { setFixture } from '$lib/db';
 	import { event } from '$lib/state';
 	import Scores from './scores.svelte';
 	import SetTime from './setTime.svelte';
 	$: fixtureID = $page.params.fixtureID;
 	$: fixture = $event.fixtures.find((x) => x.id === fixtureID)!;
+	let loading = false;
+	let err: any;
+	async function deleteFixture() {
+		if (!confirm('Are you sure, this will delete the object. Once deleted cant be recovered'))
+			return;
+		try {
+			await setFixture(fixtureID, null);
+			goto('/fixtures');
+		} catch (e) {
+			err = e;
+			console.log(e);
+		}
+	}
 </script>
 
 {#if !fixture}
@@ -54,4 +70,12 @@
 	</div>
 	<Scores />
 	<SetTime />
+	<button
+		disabled={loading}
+		on:click={deleteFixture}
+		class="p-3 disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 text-white rounded-lg w-full my-5 text-2xl"
+	>
+		{loading ? 'Loading...' : 'Delete'}
+	</button>
+	<p class="err">{err ?? ''}</p>
 {/if}

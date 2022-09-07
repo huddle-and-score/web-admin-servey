@@ -146,8 +146,8 @@ export async function setPlayer(
 					data.goalSaved += player.goalSaved;
 					data.handling += player.handling;
 				}
+				data = { ...player, ...data };
 			}
-			data = { ...player, ...data };
 		}
 		const image = ref(str, 'Event/' + eventID + '/Players/' + playerID);
 		if (data === null) {
