@@ -1,10 +1,8 @@
 import { eventID, eventRef, randomStr } from './event';
-import { collection, deleteDoc, doc, setDoc } from '@firebase/firestore';
+import { collection, deleteDoc, doc, setDoc, serverTimestamp } from '@firebase/firestore';
 import type { Timestamp } from '@firebase/firestore';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { getFirebase } from './firebase';
-import firebase from 'firebase/compat';
-import FieldValue = firebase.firestore.FieldValue;
 
 const { str } = getFirebase();
 
@@ -28,7 +26,7 @@ export async function setVideo(
 ) {
 	if (videoID === undefined) {
 		videoID = randomStr();
-		(data as any).createdAt = FieldValue.serverTimestamp();
+		(data as any).createdAt = serverTimestamp();
 	}
 	const image = ref(str, 'Event/' + eventID + '/Video/' + videoID);
 	const videoRef = doc(videoColl, videoID);

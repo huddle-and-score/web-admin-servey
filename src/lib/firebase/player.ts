@@ -1,9 +1,7 @@
-import { runTransaction, doc } from '@firebase/firestore';
+import { runTransaction, deleteField } from '@firebase/firestore';
 import { getFirebase } from './firebase';
 import { getDownloadURL, ref, uploadBytes, deleteObject } from '@firebase/storage';
 import { eventID, eventRef } from './event';
-import firebase from 'firebase/compat';
-import FieldValue = firebase.firestore.FieldValue;
 const { db, str } = getFirebase();
 
 export interface PlayerProfile<image = string> {
@@ -161,7 +159,7 @@ export async function setPlayer(
 			}
 		}
 		transaction.update(eventRef, {
-			['players.' + playerID]: data ? playerToString(data as Player) : FieldValue.delete()
+			['players.' + playerID]: data ? playerToString(data as Player) : deleteField()
 		});
 	});
 	return playerID;

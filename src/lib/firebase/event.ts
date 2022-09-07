@@ -1,7 +1,5 @@
-import { doc, updateDoc } from '@firebase/firestore';
+import { doc, updateDoc, deleteField } from '@firebase/firestore';
 import { getFirebase } from './firebase';
-import firebase from 'firebase/compat';
-import FieldValue = firebase.firestore.FieldValue;
 
 const { db } = getFirebase();
 
@@ -27,6 +25,6 @@ export function randomStr(length = 10) {
 
 export async function setLiveStream(url: null | string) {
 	await updateDoc(eventRef, {
-		liveStream: url ?? FieldValue.delete()
+		liveStream: url ?? deleteField()
 	});
 }

@@ -1,8 +1,6 @@
-import { runTransaction } from '@firebase/firestore';
+import { runTransaction, deleteField } from '@firebase/firestore';
 import { eventRef } from './event';
 import { getFirebase } from './firebase';
-import firebase from 'firebase/compat';
-import FieldValue = firebase.firestore.FieldValue;
 
 const { db } = getFirebase();
 
@@ -59,7 +57,7 @@ export async function setFixture(
 			}
 		}
 		transaction.update(eventRef, {
-			['fixtures.' + fixtureID]: data ? fixtureToString(data as Fixture) : FieldValue.delete()
+			['fixtures.' + fixtureID]: data ? fixtureToString(data as Fixture) : deleteField()
 		});
 	});
 }

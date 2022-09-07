@@ -1,9 +1,7 @@
-import { runTransaction } from '@firebase/firestore';
+import { runTransaction, deleteField } from '@firebase/firestore';
 import { getFirebase } from './firebase';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from '@firebase/storage';
 import { eventID, eventRef } from './event';
-import firebase from 'firebase/compat';
-import FieldValue = firebase.firestore.FieldValue;
 
 const { db, str } = getFirebase();
 
@@ -43,7 +41,7 @@ export async function setTeam(teamID: undefined | string, data: Team<File | stri
 			data.logo = await getDownloadURL(logo);
 		}
 		transaction.update(eventRef, {
-			['teams.' + teamID]: data ? teamToString(data as Team) : FieldValue.delete()
+			['teams.' + teamID]: data ? teamToString(data as Team) : deleteField()
 		});
 	});
 	return teamID;
