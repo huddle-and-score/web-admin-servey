@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
-	import { setPlayer } from '$lib/db';
+	import { setPlayer } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	import Profile from './profile.svelte';
 	import Stats from './stats.svelte';

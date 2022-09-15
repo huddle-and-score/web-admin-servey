@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { setPlayer } from '$lib/db';
+	import { setPlayer } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	import { onMount } from 'svelte';
 	$: playerID = $page.params.playerID;
@@ -15,10 +15,12 @@
 	$: teamIDErr = teams.find((x) => x.id === teamID) === undefined;
 	let jerseyNum = '';
 	$: jerseyNumErr = !/^\d+$/.test(jerseyNum);
-	let position: string = '';
-	$: positionErr = position === '';
+	let position: 'Forward' | 'Midfield' | 'Defence' | 'Goalkeeper';
+	$: positionErr = !position;
 	let instagramUsername = '';
 	$: instagramUsernameErr = instagramUsername === '';
+	let place = '';
+	$: placeErr = place === '';
 
 	$: ok =
 		!displayImageErr &&
@@ -26,6 +28,7 @@
 		!teamIDErr &&
 		!jerseyNumErr &&
 		!positionErr &&
+		!placeErr &&
 		!instagramUsernameErr &&
 		!loading &&
 		(displayImage?.length == 1 ||
@@ -33,7 +36,8 @@
 			teamID !== player.teamID ||
 			jerseyNum !== player.jerseyNum ||
 			position !== player.position ||
-			instagramUsername !== player.instagramUsername);
+			instagramUsername !== player.instagramUsername ||
+			place !== player.place);
 
 	onMount(function () {
 		name = player.name;
@@ -41,6 +45,7 @@
 		jerseyNum = player.jerseyNum;
 		position = player.position;
 		instagramUsername = player.instagramUsername;
+		place = player.place;
 	});
 
 	let loading = false;
@@ -54,7 +59,8 @@
 				name,
 				displayImage: displayImage?.[0] ?? player.displayImage,
 				position,
-				instagramUsername
+				instagramUsername,
+				place
 			});
 			displayImage = undefined;
 		} catch (e) {
@@ -115,6 +121,13 @@
 		<input bind:value={instagramUsername} id="instagram-username" />
 		{#if instagramUsernameErr}
 			<p class="err">Enter player's username</p>
+		{/if}
+	</div>
+	<div class="field">
+		<label for="place">Place</label>
+		<input bind:value={place} id="place" />
+		{#if placeErr}
+			<p class="err">Enter player's Place</p>
 		{/if}
 	</div>
 	<div class="err">

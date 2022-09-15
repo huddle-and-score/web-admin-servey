@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { videos, event } from '$lib/state';
-	import { setVideo } from '$lib/db';
+	import { setVideo } from '$lib/firebase/db';
 	import { getBeforeContent, getSuggestionsInContent } from '$lib/utility';
 	import { onMount } from 'svelte';
+	import Caption from '$lib/Caption.svelte';
 
 	$: videoID = $page.params.videoID;
 	$: video = $videos.find((x) => x.id === videoID)!;
@@ -17,6 +18,7 @@
 		})
 		.join('');
 
+	let title = '';
 	let caption = '';
 	$: connection = getBeforeContent(caption, $event);
 	$: suggestions = getSuggestionsInContent(caption, $event);
@@ -25,12 +27,14 @@
 	let err: any;
 	$: ok = !loading && caption && (caption !== videoCaption || videoFile?.length === 1);
 	onMount(function () {
+		title = video.title;
 		caption = videoCaption;
 	});
 	async function updateVideo() {
 		loading = true;
 		try {
 			await setVideo(videoID, {
+				title,
 				caption: connection
 					.map((x) =>
 						x.type === 'text'
@@ -53,34 +57,18 @@
 	}
 </script>
 
-<div class="field">
-	<label for="caption">Caption</label>
-	<textarea bind:value={caption} class="min-w-full min-h-[150px]" id="caption" />
-	<label for="caption">Suggestions</label>
-	<div
-		class="hide-scroll-bar mt-0.5 border items-start overflow-x-auto overflow-y-hidden rounded flex space-x-2 px-1"
-	>
-		<div class="h-10" />
-		{#each suggestions.suggestion as suggestion}
-			<button
-				on:click={() => (caption = suggestion.setStr)}
-				class="px-2 whitespace-nowrap h-10 my-1 bg-gray-300 rounded-lg"
-			>
-				{suggestion.val.name}
-			</button>
-		{/each}
-	</div>
-	{#if !caption}
-		<p class="err">Enter a Caption</p>
-	{/if}
-</div>
+<Caption bind:caption {suggestions} />
 <form on:submit|preventDefault={updateVideo}>
+	<div class="field">
+		<label for="title">Title</label>
+		<input id="title" bind:value={title} />
+		{#if !title}
+			<p class="err">Enter a Title</p>
+		{/if}
+	</div>
 	<div class="field">
 		<label for="display-videoFile">Display Video</label>
 		<input bind:files={videoFile} type="file" id="display-videoFile" />
-		{#if !videoFile || videoFile.length !== 1}
-			<p class="err">Select a Display Video</p>
-		{/if}
 	</div>
 	<div class="err">
 		{err ?? ''}
@@ -109,7 +97,7 @@
 					</span>
 				</div>
 				<span>
-					{val.player.points}
+					{val.player.score}
 				</span>
 			</div>
 		</a>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { setFixture } from '$lib/db';
+	import { setFixture } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	$: teams = $event.sortedTeams;
 

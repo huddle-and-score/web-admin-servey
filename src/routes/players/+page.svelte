@@ -32,7 +32,7 @@
 				</span>
 			</div>
 			<span>
-				{player.points}
+				{player.score}
 			</span>
 		</div>
 	</a>

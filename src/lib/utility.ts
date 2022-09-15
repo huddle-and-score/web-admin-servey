@@ -1,4 +1,4 @@
-import type { Event, EventPlayer, EventTeam } from './db';
+import type { Event, EventPlayer, EventTeam } from './firebase/db';
 export type beforeContent = (
 	| { type: 'text'; text: string }
 	| { type: 'player'; player: EventPlayer }
@@ -34,12 +34,10 @@ export function getBeforeContent(str: string, event: Event): beforeContent {
 	return val;
 }
 
-export function getSuggestionsInContent(
-	str: string,
-	event: Event
-):
+export type Suggestions =
 	| { type: 'team'; suggestion: { val: EventTeam; setStr: string }[] }
-	| { type: 'player'; suggestion: { val: EventPlayer; setStr: string }[] } {
+	| { type: 'player'; suggestion: { val: EventPlayer; setStr: string }[] };
+export function getSuggestionsInContent(str: string, event: Event): Suggestions {
 	if (str.endsWith('@')) {
 		return {
 			type: 'team',
@@ -53,7 +51,10 @@ export function getSuggestionsInContent(
 			type: 'team',
 			suggestion: event.sortedTeams
 				.filter((x) => x.acronym.includes(proxy))
-				.map((x) => ({ val: x, setStr: str.substring(0, str.length - proxy.length) + x.acronym }))
+				.map((x) => ({
+					val: x,
+					setStr: str.substring(0, str.length - proxy.length) + x.acronym
+				}))
 		};
 	}
 	if ((proxy = str.substring(str.length - 4)).includes('@')) {
@@ -70,7 +71,7 @@ export function getSuggestionsInContent(
 		}
 		return {
 			type: 'player',
-			suggestion: team.players.map((x) => ({ val: x, setStr: str + x.jerseyNum }))
+			suggestion: team.players.map((x) => ({ val: x, setStr: str + x.jerseyNum + ' ' }))
 		};
 	}
 	return {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { setPlayer } from '$lib/db';
+	import { setPlayer } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	$: teams = $event.sortedTeams;
 	let displayImage: FileList;
@@ -11,10 +11,12 @@
 	$: teamIDErr = teams.find((x) => x.id === teamID) === undefined;
 	let jerseyNum = '';
 	$: jerseyNumErr = !/^\d+$/.test(jerseyNum);
-	let position: string = '';
-	$: positionErr = position === '';
+	let position: 'Forward' | 'Midfield' | 'Defence' | 'Goalkeeper';
+	$: positionErr = !position;
 	let instagramUsername = '';
 	$: instagramUsernameErr = instagramUsername === '';
+	let place = '';
+	$: placeErr = place === '';
 
 	$: ok =
 		!displayImageErr &&
@@ -36,7 +38,8 @@
 				name,
 				displayImage: displayImage[0],
 				position,
-				instagramUsername
+				instagramUsername,
+				place
 			});
 			await goto('/players/' + playerID);
 		} catch (e) {
@@ -62,6 +65,7 @@
 	<div class="field">
 		<label for="position">Position</label>
 		<select bind:value={position} id="position">
+			<option value={undefined} hidden>Select Position</option>
 			<option value="Forward">Forward</option>
 			<option value="Midfield">Midfield</option>
 			<option value="Defence">Defence</option>
@@ -97,6 +101,13 @@
 		<input bind:value={instagramUsername} id="instagram-username" />
 		{#if instagramUsernameErr}
 			<p class="err">Enter player's username</p>
+		{/if}
+	</div>
+	<div class="field">
+		<label for="place">Place</label>
+		<input bind:value={place} id="place" />
+		{#if placeErr}
+			<p class="err">Enter player's Place</p>
 		{/if}
 	</div>
 	<div class="err">

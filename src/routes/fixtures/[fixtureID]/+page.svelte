@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
-	import { setFixture } from '$lib/db';
+	import { setFixture } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	import Scores from './scores.svelte';
 	import SetTime from './setTime.svelte';

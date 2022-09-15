@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { videosRef } from '$lib/db';
+	import { videosRef } from '$lib/firebase/db';
 	import { onMount } from 'svelte';
 	import { onSnapshot } from 'firebase/firestore';
 	import { videos } from '$lib/state';

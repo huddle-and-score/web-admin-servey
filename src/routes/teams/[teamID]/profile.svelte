@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { event } from '$lib/state';
-	import { setTeam } from '$lib/db';
+	import { setTeam } from '$lib/firebase/db';
 	import Slider from '$lib/Slider.svelte';
 	import { onMount } from 'svelte';
 	import type ColorPickerClass from 'svelte-awesome-color-picker';
@@ -61,7 +61,7 @@
 {#if ColorPicker}
 	<div class="field">
 		<label for="color">Team Color</label>
-		<svelte:component this={ColorPicker} id="color" bind:hex={color} />
+		<svelte:component this={ColorPicker} bind:hex={color} />
 	</div>
 {/if}
 <form on:submit|preventDefault={updateTeam}>

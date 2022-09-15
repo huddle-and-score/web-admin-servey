@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { setFixture } from '$lib/db';
+	import { setFixture } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	import { onMount } from 'svelte';
 	$: fixtureID = $page.params.fixtureID;

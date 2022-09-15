@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
-	import { setTeam } from '$lib/db';
+	import { setTeam } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	import Profile from './profile.svelte';
 	$: teamID = $page.params.teamID;
@@ -40,12 +40,6 @@
 		</div>
 	</div>
 	<Profile />
-	<a
-		class="w-full cursor-pointer block mt-3 border-2 border-gray-700 border-dashed rounded-xl p-3 text-xl"
-		href="/players/__"
-	>
-		➕ Create Player
-	</a>
 	{#each team.players as player}
 		<a
 			href="/players/{player.id}"
@@ -67,7 +61,7 @@
 					</span>
 				</div>
 				<span>
-					{player.points}
+					{player.score}
 				</span>
 			</div>
 		</a>

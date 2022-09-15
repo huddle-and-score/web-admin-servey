@@ -1,20 +1,21 @@
-import type { Fixture } from './firebase/fixture';
-import { setFixture, stringToFixture } from './firebase/fixture';
-import type { VideoDocument } from './firebase/video';
-import { setVideo, videoColl } from './firebase/video';
-import type { NewsDocument } from './firebase/news';
-import { newsColl, setNews } from './firebase/news';
-import type { EventDocument } from './firebase/event';
-import { eventRef, setLiveStream } from './firebase/event';
-import type { Player } from './firebase/player';
-import { setPlayer, stringToPlayer } from './firebase/player';
-import type { Team } from './firebase/team';
-import { setTeam, stringToTeam } from './firebase/team';
+import type { Fixture } from './fixture';
+import { setFixture, stringToFixture } from './fixture';
+import type { VideoDocument } from './video';
+import { setVideo, videoColl } from './video';
+import type { NewsDocument } from './news';
+import { newsColl, setNews } from './news';
+import type { EventDocument } from './event';
+import { eventRef, setLiveStream } from './event';
+import type { Player } from './player';
+import { setPlayer, stringToPlayer } from './player';
+import type { Team } from './team';
+import { setTeam, stringToTeam } from './team';
 import { orderBy, query, where } from '@firebase/firestore';
 
 export interface EventFixture extends Fixture {
 	id: string;
 	displayTime: string;
+	displayDate: string;
 	team1: Team;
 	team2: Team;
 }
@@ -31,6 +32,7 @@ export interface EventTeam extends Team {
 	possession: number;
 	defence: number;
 	points: number;
+	score: number;
 	goalDifference: number;
 }
 
@@ -44,12 +46,13 @@ export interface EventPlayer extends Player {
 	possession: number;
 	conceiveRate: number;
 	defence: number;
-	points: number;
+	score: number;
 	goalkeeperPoints: number;
 	isGoalkeeper: boolean;
 }
 
 interface Event {
+	upcommingFixtures: EventFixture[];
 	liveStream: string | undefined;
 	fixtures: EventFixture[];
 	teams: { [teamID: string]: EventTeam };
@@ -71,7 +74,8 @@ function parseEventDocument(doc: EventDocument): Event {
 			return {
 				...fixture,
 				id: x[0],
-				displayTime: date.toLocaleString(),
+				displayTime: date.toLocaleTimeString(),
+				displayDate: date.toLocaleDateString(),
 				get team1() {
 					return (team1 ??= teams[this.team1ID]);
 				},
@@ -153,15 +157,18 @@ function parseEventDocument(doc: EventDocument): Event {
 					return (data.defence ??=
 						this.players.reduce((p, c) => p + c.defence, 0) / this.players.length);
 				},
+				get score() {
+					return (data.score ??= (this.attack + this.possession + this.defence) / 3);
+				},
 				get points() {
-					return (data.points ??= (this.attack + this.possession + this.defence) / 3);
+					return (data.points ??= this.won - this.loss + this.matchesPlayed);
 				},
 				get goalDifference() {
 					return (data.goalDifference ??= this.goalScored - this.goalConceived);
 				}
 			} as EventTeam);
 		})
-		.sort((a, b) => a.points - b.points);
+		.sort((a, b) => b.points - a.points);
 	let maxAttack = 1;
 	let maxPossession = 1;
 	let maxDefence = 1;
@@ -199,8 +206,8 @@ function parseEventDocument(doc: EventDocument): Event {
 				get conceiveRate() {
 					return (data.defence ??= (100 * this.goalConceived) / this.goalSaved);
 				},
-				get points() {
-					return (data.points ??= (this.attack + this.possession + this.defence) / 3);
+				get score() {
+					return (data.score ??= (this.attack + this.possession + this.defence) / 3);
 				},
 				get goalkeeperPoints() {
 					return (data.goalkeeperPoints ??=
@@ -208,13 +215,14 @@ function parseEventDocument(doc: EventDocument): Event {
 				}
 			});
 		})
-		.sort((a, b) => a.goals * 1000 + a.assists - b.goals * 1000 - b.assists);
+		.sort((a, b) => b.goals * 1000 + b.assists - a.goals * 1000 - a.assists);
 	const sortedGoalkeepers = [...sortedPlayers]
 		.filter(function (x) {
 			x.team.players.push(x);
 			return x.isGoalkeeper;
 		})
-		.sort((a, b) => a.handling - b.handling);
+		.sort((a, b) => b.handling - a.handling);
+	let upcommingFixtures: EventFixture[];
 	return {
 		liveStream: doc.liveStream,
 		fixtures,
@@ -222,7 +230,14 @@ function parseEventDocument(doc: EventDocument): Event {
 		players,
 		sortedPlayers,
 		sortedGoalkeepers,
-		sortedTeams
+		sortedTeams,
+		get upcommingFixtures() {
+			if (!upcommingFixtures?.length) {
+				const now = new Date().toISOString();
+				upcommingFixtures = fixtures.filter((f) => f.time.localeCompare(now) > 0);
+			}
+			return upcommingFixtures;
+		}
 	};
 }
 
@@ -238,7 +253,7 @@ interface Video extends VideoDocument {
 	id: string;
 	content: content;
 }
-export const videosRef = query(videoColl, orderBy('createdAt', 'desc')).withConverter<Video>({
+export const VideoColl = videoColl.withConverter<Video>({
 	fromFirestore(snapshot) {
 		let content: content;
 		return {
@@ -253,13 +268,14 @@ export const videosRef = query(videoColl, orderBy('createdAt', 'desc')).withConv
 		throw 'unimplemented';
 	}
 });
+export const videosRef = query(VideoColl, orderBy('createdAt', 'desc'));
 
 export function videoRelated(id: string) {
 	return query(videosRef, where('connectionIDs', 'array-contains', id));
 }
 
 type content = (
-	| { type: 'text'; text: string }
+	| { type: 'text'; text: (string | null)[] }
 	| { type: 'player'; playerID: string }
 	| { type: 'team'; teamID: string }
 )[];
@@ -276,24 +292,35 @@ function getContent(str: string): content {
 	let lastIndex = 0;
 	while ((match = re.exec(str)) != null) {
 		if (match[1] === '@p') {
-			val.push(
-				{ type: 'text', text: str.substring(lastIndex, match.index) },
-				{ type: 'player', playerID: match[0].trim().substring(1) }
-			);
+			const proxy = str.substring(lastIndex, match.index).split('\n');
+			const text: (string | null)[] = [];
+			for (let i = 0; i < proxy.length; i++) {
+				text.push(proxy[i], null);
+			}
+			text.pop();
+			val.push({ type: 'text', text }, { type: 'player', playerID: match[0].trim().substring(1) });
 			lastIndex = match.index + match[0].length;
 		} else if (match[1] === '#t') {
-			val.push(
-				{ type: 'text', text: str.substring(lastIndex, match.index) },
-				{ type: 'team', teamID: match[0].trim().substring(1) }
-			);
+			const proxy = str.substring(lastIndex, match.index).split('\n');
+			const text: (string | null)[] = [];
+			for (let i = 0; i < proxy.length; i++) {
+				text.push(proxy[i], null);
+			}
+			text.pop();
+			val.push({ type: 'text', text }, { type: 'team', teamID: match[0].trim().substring(1) });
 			lastIndex = match.index + match[0].length;
 		}
 	}
-	val.push({ type: 'text', text: str.substring(lastIndex) });
+	const proxy = str.substring(lastIndex).split('\n');
+	const text: (string | null)[] = [];
+	for (let i = 0; i < proxy.length; i++) {
+		text.push(proxy[i], null);
+	}
+	text.pop();
+	val.push({ type: 'text', text });
 	return val;
 }
-
-export const newsRef = query(newsColl, orderBy('createdAt', 'desc')).withConverter<News>({
+export const NewsColl = newsColl.withConverter<News>({
 	fromFirestore(snapshot) {
 		let content: content;
 		return {
@@ -309,6 +336,7 @@ export const newsRef = query(newsColl, orderBy('createdAt', 'desc')).withConvert
 	}
 });
 
+export const newsRef = query(NewsColl, orderBy('createdAt', 'desc'));
 export function newsRelated(id: string) {
 	return query(newsRef, where('connectionIDs', 'array-contains', id));
 }

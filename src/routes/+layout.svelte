@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
-	import { EventRef } from '$lib/db';
+	import { EventRef } from '$lib/firebase/db';
 	import { event, auth } from '$lib/state';
 	import { getFirebase } from '$lib/firebase/firebase';
 	import { onSnapshot } from 'firebase/firestore';
@@ -29,9 +29,9 @@
 		<Login />
 	{:else}
 		<nav class="sticky text-4xl top-0 bg-white w-full h-16 border-b mb-5 py-2 flex justify-between">
-			<button onclick="history.back()">🔙</button>
+			<button on:click={() => history.back()}>🔙</button>
 			<a href="/">📃</a>
-			<button onclick="history.forward()">🔜</button>
+			<button on:click={() => history.forward()}>🔜</button>
 		</nav>
 		{#if $event}
 			<slot />

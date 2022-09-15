@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
-	import { setVideo } from '$lib/db';
+	import { setVideo } from '$lib/firebase/db';
 	import { videos, event } from '$lib/state';
 	import Changes from './changes.svelte';
 	$: videoID = $page.params.videoID;

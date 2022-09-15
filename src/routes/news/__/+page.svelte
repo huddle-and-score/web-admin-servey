@@ -1,20 +1,23 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { setNews } from '$lib/db';
+	import { setNews } from '$lib/firebase/db';
 	import { getBeforeContent, getSuggestionsInContent } from '$lib/utility';
 	import { event } from '$lib/state';
+	import Caption from '$lib/Caption.svelte';
 
+	let title = '';
 	let caption = '';
 	$: connection = getBeforeContent(caption, $event);
 	$: suggestions = getSuggestionsInContent(caption, $event);
 	let image: FileList;
 	let loading = false;
 	let err: any;
-	$: ok = !loading && caption && image && image.length === 1;
+	$: ok = !loading && title && caption && image && image.length === 1;
 	async function createNews() {
 		loading = true;
 		try {
 			const newsID = await setNews(undefined, {
+				title,
 				caption: connection
 					.map((x) =>
 						x.type === 'text'
@@ -38,28 +41,15 @@
 	}
 </script>
 
-<div class="field">
-	<label for="caption">Caption</label>
-	<textarea bind:value={caption} class="min-w-full min-h-[150px]" id="caption" />
-	<label for="caption">Suggestions</label>
-	<div
-		class="hide-scroll-bar mt-0.5 border items-start overflow-x-auto overflow-y-hidden rounded flex space-x-2 px-1"
-	>
-		<div class="h-10" />
-		{#each suggestions.suggestion as suggestion}
-			<button
-				on:click={() => (caption = suggestion.setStr)}
-				class="px-2 whitespace-nowrap h-10 my-1 bg-gray-300 rounded-lg"
-			>
-				{suggestion.val.name}
-			</button>
-		{/each}
-	</div>
-	{#if !caption}
-		<p class="err">Enter a Caption</p>
-	{/if}
-</div>
+<Caption bind:caption {suggestions} />
 <form on:submit|preventDefault={createNews}>
+	<div class="field">
+		<label for="title">Title</label>
+		<input id="title" bind:value={title} />
+		{#if !title}
+			<p class="err">Enter a Title</p>
+		{/if}
+	</div>
 	<div class="field">
 		<label for="display-image">Display Image</label>
 		<input bind:files={image} type="file" id="display-image" />
@@ -94,7 +84,7 @@
 					</span>
 				</div>
 				<span>
-					{val.player.points}
+					{val.player.score}
 				</span>
 			</div>
 		</a>

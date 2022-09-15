@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { setPlayer } from '$lib/db';
+	import { setPlayer } from '$lib/firebase/db';
 	import { event } from '$lib/state';
 	$: playerID = $page.params.playerID;
 	$: player = $event.players[playerID];
 
-	let matchesPlayed: '1' | '0' | '-1' | '' = '';
+	let matchesPlayed = '';
 	let goals = '';
 	let assists = '';
 	let passes = '';
@@ -20,7 +20,7 @@
 	const isInt = /^(-||\+)\d+$/;
 
 	$: ok =
-		/^(1|0|-1)$/.test(matchesPlayed) &&
+		isInt.test(matchesPlayed) &&
 		isInt.test(goals) &&
 		isInt.test(assists) &&
 		isInt.test(passes) &&
@@ -40,7 +40,7 @@
 		loading = true;
 		try {
 			await setPlayer(playerID, {
-				matchesPlayed: parseInt(matchesPlayed) as 0 | 1 | -1,
+				matchesPlayed: parseInt(matchesPlayed),
 				goals: parseInt(goals),
 				assists: parseInt(assists),
 				passes: parseInt(passes),
@@ -83,33 +83,23 @@
 </script>
 
 <form on:submit|preventDefault={updateStats}>
-	<div class="flex justify-between">
-		<div class="field">
-			<label for="type">Change Type</label>
-			<select id="type" bind:value={matchesPlayed}>
-				<option value="0">Set Values</option>
-				<option value="1">Add Values</option>
-				<option hidden value="-1">Add Values</option>
-			</select>
-			{#if !matchesPlayed}
-				<p class="err">Select a Type</p>
-			{/if}
-		</div>
-		{#if matchesPlayed === '1' || matchesPlayed === '-1'}
-			<div class="field">
-				<label for="matches-played">Matches Played</label>
-				<select id="matches-played" bind:value={matchesPlayed}>
-					<option value="1">Match Played (+1)</option>
-					<option value="-1">Match Played (-1)</option>
-				</select>
-			</div>
+	<div class="field max-w-[18rem]">
+		<label for="matches-played" class="capitalize flex justify-between">
+			<span>matchesPlayed</span>
+			<span class="pr-2">
+				{player.matchesPlayed} → {parseInt(matchesPlayed) + player.matchesPlayed}
+			</span>
+		</label>
+		<input bind:value={matchesPlayed} id="matches-played" />
+		{#if !isInt.test(matchesPlayed)}
+			<p class="err">Intiger required</p>
 		{/if}
 	</div>
 	<div class="field max-w-[18rem]">
 		<label for="goals" class="capitalize flex justify-between">
 			<span>goals</span>
 			<span class="pr-2">
-				{player.goals} → {matchesPlayed === '0' ? goals : parseInt(goals) + player.goals}
+				{player.goals} → {parseInt(goals) + player.goals}
 			</span>
 		</label>
 		<input bind:value={goals} id="goals" />
@@ -121,7 +111,7 @@
 		<label for="assists" class="capitalize flex justify-between">
 			<span>assists</span>
 			<span class="pr-2">
-				{player.assists} → {matchesPlayed === '0' ? assists : parseInt(assists) + player.assists}
+				{player.assists} → {parseInt(assists) + player.assists}
 			</span>
 		</label>
 		<input bind:value={assists} id="assists" />
@@ -133,7 +123,7 @@
 		<label for="passes" class="capitalize flex justify-between">
 			<span>passes</span>
 			<span class="pr-2">
-				{player.passes} → {matchesPlayed === '0' ? passes : parseInt(passes) + player.passes}
+				{player.passes} → {parseInt(passes) + player.passes}
 			</span>
 		</label>
 		<input bind:value={passes} id="passes" />
@@ -145,7 +135,7 @@
 		<label for="tackles" class="capitalize flex justify-between">
 			<span>tackles</span>
 			<span class="pr-2">
-				{player.tackles} → {matchesPlayed === '0' ? tackles : parseInt(tackles) + player.tackles}
+				{player.tackles} → {parseInt(tackles) + player.tackles}
 			</span>
 		</label>
 		<input bind:value={tackles} id="tackles" />
@@ -157,9 +147,7 @@
 		<label for="dribbles" class="capitalize flex justify-between">
 			<span>dribbles</span>
 			<span class="pr-2">
-				{player.dribbles} → {matchesPlayed === '0'
-					? dribbles
-					: parseInt(dribbles) + player.dribbles}
+				{player.dribbles} → {parseInt(dribbles) + player.dribbles}
 			</span>
 		</label>
 		<input bind:value={dribbles} id="dribbles" />
@@ -171,7 +159,7 @@
 		<label for="shots" class="capitalize flex justify-between">
 			<span>shots</span>
 			<span class="pr-2">
-				{player.shots} → {matchesPlayed === '0' ? shots : parseInt(shots) + player.shots}
+				{player.shots} → {parseInt(shots) + player.shots}
 			</span>
 		</label>
 		<input bind:value={shots} id="shots" />
@@ -183,9 +171,7 @@
 		<label for="yellowCard" class="capitalize flex justify-between">
 			<span>yellowCard</span>
 			<span class="pr-2">
-				{player.yellowCard} → {matchesPlayed === '0'
-					? yellowCard
-					: parseInt(yellowCard) + player.yellowCard}
+				{player.yellowCard} → {parseInt(yellowCard) + player.yellowCard}
 			</span>
 		</label>
 		<input bind:value={yellowCard} id="yellowCard" />
@@ -197,7 +183,7 @@
 		<label for="redCard" class="capitalize flex justify-between">
 			<span>redCard</span>
 			<span class="pr-2">
-				{player.redCard} → {matchesPlayed === '0' ? redCard : parseInt(redCard) + player.redCard}
+				{player.redCard} → {parseInt(redCard) + player.redCard}
 			</span>
 		</label>
 		<input bind:value={redCard} id="redCard" />
@@ -210,9 +196,7 @@
 			<label for="goalConceived" class="capitalize flex justify-between">
 				<span>goalConceived</span>
 				<span class="pr-2">
-					{player.goalConceived} → {matchesPlayed === '0'
-						? goalConceived
-						: parseInt(goalConceived) + player.goalConceived}
+					{player.goalConceived} → {parseInt(goalConceived) + player.goalConceived}
 				</span>
 			</label>
 			<input bind:value={goalConceived} id="goalConceived" />
@@ -224,9 +208,7 @@
 			<label for="goalSaved" class="capitalize flex justify-between">
 				<span>goalSaved</span>
 				<span class="pr-2">
-					{player.goalSaved} → {matchesPlayed === '0'
-						? goalSaved
-						: parseInt(goalSaved) + player.goalSaved}
+					{player.goalSaved} → {parseInt(goalSaved) + player.goalSaved}
 				</span>
 			</label>
 			<input bind:value={goalSaved} id="goalSaved" />
@@ -238,9 +220,7 @@
 			<label for="handling" class="capitalize flex justify-between">
 				<span>handling</span>
 				<span class="pr-2">
-					{player.handling} → {matchesPlayed === '0'
-						? handling
-						: parseInt(handling) + player.handling}
+					{player.handling} → {parseInt(handling) + player.handling}
 				</span>
 			</label>
 			<input bind:value={handling} id="handling" />

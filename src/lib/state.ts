@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { News, Event, Video } from './db';
+import type { News, Event, Video } from './firebase/db';
 
 export const event = writable<Event>();
 export const news = writable<News[]>();

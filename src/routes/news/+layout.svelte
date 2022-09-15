@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { newsRef } from '$lib/db';
+	import { newsRef } from '$lib/firebase/db';
 	import { onMount } from 'svelte';
 	import { onSnapshot } from 'firebase/firestore';
 	import { news } from '$lib/state';

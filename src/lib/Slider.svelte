@@ -14,7 +14,6 @@
 	let thumb: HTMLElement;
 	let progressBar: HTMLElement;
 	let element: HTMLElement;
-
 	// Internal State
 	let elementX = 0;
 	let currentThumb: HTMLElement | null = null;

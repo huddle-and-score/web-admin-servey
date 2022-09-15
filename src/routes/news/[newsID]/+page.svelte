@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	import { page } from '$app/stores';
-	import { setNews } from '$lib/db';
+	import { setNews } from '$lib/firebase/db';
 	import { news as newsStore, event } from '$lib/state';
 	import Changes from './changes.svelte';
 	$: newsID = $page.params.newsID;

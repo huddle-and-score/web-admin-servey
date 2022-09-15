@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setTeam } from '$lib/db';
+	import { setTeam } from '$lib/firebase/db';
 	import Slider from '$lib/Slider.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -43,7 +43,7 @@
 
 <div>
 	<label for="color">Team Color</label>
-	<svelte:component this={ColorPicker} id="color" bind:hex={color} />
+	<svelte:component this={ColorPicker} bind:hex={color} />
 </div>
 <form on:submit|preventDefault={createTeam}>
 	<div class="field">

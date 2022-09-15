@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { event } from '$lib/state';
-	import { setLiveStream } from '$lib/db';
+	import { setLiveStream } from '$lib/firebase/db';
 	import { onMount } from 'svelte';
 
 	$: liveStreamUrl = $event.liveStream ?? '';
