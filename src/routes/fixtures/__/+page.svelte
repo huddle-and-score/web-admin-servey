@@ -38,7 +38,7 @@
 
 <form on:submit|preventDefault={createFixture}>
 	<div class="field">
-		<label for="team1ID">From Team</label>
+		<label for="team1ID">Team1</label>
 		<select bind:value={team1ID} id="team1ID">
 			{#each teams as team}
 				<option hidden={team2ID === team.id} value={team.id}>{team.name}</option>
@@ -49,7 +49,7 @@
 		{/if}
 	</div>
 	<div class="field">
-		<label for="team2ID">From Team</label>
+		<label for="team2ID">Team2</label>
 		<select bind:value={team2ID} id="team1ID">
 			{#each teams as team}
 				<option hidden={team1ID === team.id} value={team.id}>{team.name}</option>
