@@ -31,9 +31,6 @@
 					{team.acronym}
 				</span>
 			</div>
-			<span>
-				{team.points}
-			</span>
 		</div>
 	</a>
 {/each}

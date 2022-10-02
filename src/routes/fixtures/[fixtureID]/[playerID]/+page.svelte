@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-
 	import { page } from '$app/stores';
-	import { setPlayer } from '$lib/firebase/db';
+	import { setFixture } from '$lib/firebase/db';
 	import { event } from '$lib/state';
-	import Profile from './profile.svelte';
+	import Stats from './stats.svelte';
 	$: playerID = $page.params.playerID;
 	$: player = $event.players[playerID];
+	$: fixtureID = $page.params.fixtureID;
+	$: fixture = $event.fixtures.find((x) => x.id === fixtureID);
+	$: stats = fixture?.stats?.[playerID];
 	let loading = false;
 	let err: any;
-	async function deletePlayer() {
+	async function removePlayerStats() {
 		if (!confirm('Are you sure, this will delete the object. Once deleted cant be recovered'))
 			return;
 		try {
-			await setPlayer(playerID, null);
-			goto('/players');
+			await setFixture(fixtureID, playerID, null);
 		} catch (e) {
 			err = e;
 			console.log(e);
@@ -23,7 +23,9 @@
 </script>
 
 {#if !player}
-	No such player found
+	No such Player found
+{:else if !fixture}
+	No such Fixture found
 {:else}
 	<div class="flex justify-between">
 		<div class="flex">
@@ -47,13 +49,15 @@
 			<div>PlayerID: “{playerID}”</div>
 		</div>
 	</div>
-	<Profile />
-	<button
-		disabled={loading}
-		on:click={deletePlayer}
-		class="p-3 disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 text-white rounded-lg w-full my-5 text-2xl"
-	>
-		{loading ? 'Loading...' : 'Delete'}
-	</button>
-	<p class="err">{err ?? ''}</p>
+	<Stats />
+	{#if stats}
+		<button
+			disabled={loading}
+			on:click={removePlayerStats}
+			class="p-3 disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 text-white rounded-lg w-full my-5 text-2xl"
+		>
+			{loading ? 'Loading...' : 'Not Played'}
+		</button>
+		<p class="err">{err ?? ''}</p>
+	{/if}
 {/if}

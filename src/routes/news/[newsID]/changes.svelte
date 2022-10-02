@@ -100,9 +100,6 @@
 						{val.player.team.acronym}
 					</span>
 				</div>
-				<span>
-					{val.player.score}
-				</span>
 			</div>
 		</a>
 	{:else if val.type === 'team'}
@@ -125,9 +122,6 @@
 						{val.team.acronym}
 					</span>
 				</div>
-				<span>
-					{val.team.points}
-				</span>
 			</div>
 		</a>
 	{/if}

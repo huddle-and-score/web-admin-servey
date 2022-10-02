@@ -31,9 +31,6 @@
 					{player.team.acronym}
 				</span>
 			</div>
-			<span>
-				{player.score}
-			</span>
 		</div>
 	</a>
 {/each}

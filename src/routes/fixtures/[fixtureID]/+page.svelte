@@ -70,6 +70,59 @@
 	</div>
 	<Scores />
 	<SetTime />
+	<p class="err">{err ?? ''}</p>
+	<h1 class="mt-5 text-3xl underline">Team1: {fixture.team1.name}</h1>
+	{#each $event.teams[fixture.team1ID].players as player}
+		<a
+			href="/fixtures/{fixtureID}/{player.id}"
+			class="w-full h-20 flex cursor-pointer mt-3 border border-gray-700 rounded-xl p-3 text-xl"
+		>
+			<div class="w-2 h-20 -mt-3" style="background-color: {fixture.team1.color}" />
+			<img
+				alt={player.name}
+				class="p-1 mx-4 w-14 h-14 rounded-full ring-2 ring-white"
+				src={player.displayImage}
+			/>
+			<div class="flex justify-between w-full">
+				<div>
+					<span class="block">
+						{player.name}
+					</span>
+					{#if fixture.stats?.[player.id]}
+						<span class="block"> Played ✅ </span>
+					{:else}
+						<span class="block"> Not Played ❌ </span>
+					{/if}
+				</div>
+			</div>
+		</a>
+	{/each}
+	<h1 class="mt-5 text-3xl underline">Team2: {fixture.team2.name}</h1>
+	{#each $event.teams[fixture.team2ID].players as player}
+		<a
+			href="/fixtures/{fixtureID}/{player.id}"
+			class="w-full h-20 flex cursor-pointer mt-3 border border-gray-700 rounded-xl p-3 text-xl"
+		>
+			<div class="w-2 h-20 -mt-3" style="background-color: {fixture.team1.color}" />
+			<img
+				alt={player.name}
+				class="p-1 mx-4 w-14 h-14 rounded-full ring-2 ring-white"
+				src={player.displayImage}
+			/>
+			<div class="flex justify-between w-full">
+				<div>
+					<span class="block">
+						{player.name}
+					</span>
+					{#if fixture.stats?.[player.id]}
+						<span class="block"> Played ✅ </span>
+					{:else}
+						<span class="block"> Not Played ❌ </span>
+					{/if}
+				</div>
+			</div>
+		</a>
+	{/each}
 	<button
 		disabled={loading}
 		on:click={deleteFixture}
@@ -77,5 +130,4 @@
 	>
 		{loading ? 'Loading...' : 'Delete'}
 	</button>
-	<p class="err">{err ?? ''}</p>
 {/if}
