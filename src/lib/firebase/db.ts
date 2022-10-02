@@ -18,6 +18,7 @@ export interface EventFixture extends Fixture {
 	displayDate: string;
 	team1: Team;
 	team2: Team;
+	isUpcomming: boolean;
 	scores?: { team1: number; team2: number };
 }
 
@@ -67,6 +68,7 @@ interface Event {
 function parseEventDocument(doc: EventDocument): Event {
 	const teams: { [teamID: string]: EventTeam } = {};
 	const players: { [playerID: string]: EventPlayer } = {};
+	const now = new Date(new Date().toString() + ' UTC').toISOString();
 	const fixtures: EventFixture[] = Object.entries(doc.fixtures)
 		.map(function (x): EventFixture {
 			const fixture = stringToFixture(x[1]);
@@ -75,6 +77,9 @@ function parseEventDocument(doc: EventDocument): Event {
 			return {
 				...fixture,
 				id: x[0],
+				get isUpcomming() {
+					return (data.isUpcomming ??= this.time.localeCompare(now) > 0);
+				},
 				get scores() {
 					if (!('scores' in data)) {
 						if (!this._scores) data.scores = undefined;
@@ -337,10 +342,7 @@ function parseEventDocument(doc: EventDocument): Event {
 		sortedGoalkeepers,
 		sortedTeams,
 		get upcommingFixtures() {
-			if (!upcommingFixtures?.length) {
-				const now = new Date().toISOString();
-				upcommingFixtures = fixtures.filter((f) => f.time.localeCompare(now) > 0);
-			}
+			if (!upcommingFixtures?.length) upcommingFixtures = fixtures.filter((f) => f.isUpcomming);
 			return upcommingFixtures;
 		}
 	};
