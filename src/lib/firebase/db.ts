@@ -52,6 +52,7 @@ export interface EventPlayer extends Player, PlayerStats {
 	goalkeeperPoints: number;
 	isGoalkeeper: boolean;
 	matchesPlayed: number;
+	stats: PlayerStats[];
 }
 
 interface Event {
@@ -65,10 +66,30 @@ interface Event {
 	sortedTeams: EventTeam[];
 }
 
-function parseEventDocument(doc: EventDocument): Event {
+export function now() {
+	function in2dig(x: number, p = 0) {
+		x += p;
+		if (x < 10) return '0' + x;
+		return x;
+	}
+	const d = new Date();
+	return (
+		d.getFullYear() +
+		'-' +
+		in2dig(d.getMonth(), 1) +
+		'-' +
+		in2dig(d.getDate()) +
+		'T' +
+		in2dig(d.getHours()) +
+		':' +
+		in2dig(d.getMinutes())
+	);
+}
+
+export function parseEventDocument(doc: EventDocument): Event {
 	const teams: { [teamID: string]: EventTeam } = {};
 	const players: { [playerID: string]: EventPlayer } = {};
-	const now = new Date(new Date().toString() + ' UTC').toISOString();
+	const _now = now();
 	const fixtures: EventFixture[] = Object.entries(doc.fixtures)
 		.map(function (x): EventFixture {
 			const fixture = stringToFixture(x[1]);
@@ -78,7 +99,7 @@ function parseEventDocument(doc: EventDocument): Event {
 				...fixture,
 				id: x[0],
 				get isUpcomming() {
-					return (data.isUpcomming ??= this.time.localeCompare(now) > 0);
+					return (data.isUpcomming ??= this.time.localeCompare(_now) > 0);
 				},
 				get scores() {
 					if (!('scores' in data)) {
@@ -145,7 +166,9 @@ function parseEventDocument(doc: EventDocument): Event {
 			return (teams[id] = {
 				id,
 				...stringToTeam(x[1]),
-				players: [],
+				get players() {
+					return (data.players ??= []);
+				},
 				get matchesPlayed() {
 					if (!('matchesPlayed' in data)) initFixtures();
 					return data.matchesPlayed;
@@ -201,6 +224,7 @@ function parseEventDocument(doc: EventDocument): Event {
 
 			function initFixtures() {
 				data.assists = 0;
+				data.stats = [];
 				data.dribbles = 0;
 				data.goalConceived = 0;
 				data.goals = 0;
@@ -227,6 +251,10 @@ function parseEventDocument(doc: EventDocument): Event {
 						data.tackles += stats.tackles;
 						data.yellowCard += stats.yellowCard;
 						data.matchesPlayed++;
+						data.stats.push({
+							...stats,
+							teamID: fixture.team1ID === stats.teamID ? fixture.team2ID : fixture.team1ID
+						});
 					}
 				}
 			}
@@ -234,7 +262,9 @@ function parseEventDocument(doc: EventDocument): Event {
 			return (players[id] = {
 				...player,
 				id,
-				team: teams[player.teamID],
+				get team() {
+					return (data.team ??= teams[player.teamID]);
+				},
 				get _attack() {
 					return (data._attack ??=
 						this.goals * 40 + this.assists * 20 + this.passes * 0.2 + this.shots * 6);
@@ -268,6 +298,10 @@ function parseEventDocument(doc: EventDocument): Event {
 				get goalkeeperPoints() {
 					return (data.goalkeeperPoints ??=
 						(this.conceiveRate + this.possession + this.handling) / 3);
+				},
+				get stats() {
+					if (!('stats' in data)) initFixtures();
+					return data.stats!;
 				},
 				get assists() {
 					if (!('assists' in data)) initFixtures();
