@@ -12,41 +12,23 @@
 </a>
 
 {#each $event.fixtures as fixture}
-	<a
-		href="/fixtures/{fixture.id}"
-		class="w-full h-20 flex justify-between cursor-pointer mt-3 border border-gray-700 rounded-xl px-3 text-xl"
-	>
-		<div class="flex border-l-8 py-3" style="border-color: {fixture.team1.color}">
-			<img
-				alt={fixture.team1.name}
-				class="p-1 mx-4 w-14 h-14 rounded-full ring-2 ring-white"
-				src={fixture.team1.logo}
-			/>
-			<div>
-				{fixture.team1.acronym}
-			</div>
+	<a href="/fixtures/{fixture.id}" class="flex py-0.5 border-y mt-5 page-padding">
+		<div
+			style="width: 9.81px; background-color: {fixture.team1
+				.color}; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);"
+		/>
+		<div class="w-full text-xl items-center flex justify-around pb-4 pt-5 font-medium">
+			<span>{fixture.team1.acronym}</span>
+			<img src={fixture.team1.logo} alt={fixture.team1.name} class="w-9 h-10" />
+			<span class="whitespace-nowrap">
+				{fixture.scores?.team1 ?? 0} - {fixture.scores?.team2 ?? 0}
+			</span>
+			<img src={fixture.team2.logo} alt={fixture.team1.name} class="w-9 h-10" />
+			<span>{fixture.team2.acronym}</span>
 		</div>
-		<div class="text-center py-3">
-			{#if fixture.scores}
-				<div>
-					{fixture.scores.team1 ?? '--'}
-					-
-					{fixture.scores.team2 ?? '--'}
-				</div>
-			{:else}
-				<div>No score</div>
-			{/if}
-			<div class="text-base mt-2">{fixture.displayTime}</div>
-		</div>
-		<div class="flex border-r-8 py-3" style="border-color: {fixture.team2.color}">
-			<div>
-				{fixture.team2.acronym}
-			</div>
-			<img
-				alt={fixture.team2.name}
-				class="p-1 mx-4 w-14 h-14 rounded-full ring-2 ring-white"
-				src={fixture.team2.logo}
-			/>
-		</div>
+		<div
+			style="width: 9.81px; background-color: {fixture.team2
+				.color}; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);"
+		/>
 	</a>
 {/each}

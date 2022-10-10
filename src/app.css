@@ -13,7 +13,7 @@
 .field input,
 select,
 textarea {
-	@apply block border rounded text-2xl p-1;
+	@apply block border rounded md:text-2xl p-1 w-full;
 }
 
 .err {

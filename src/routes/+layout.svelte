@@ -24,9 +24,11 @@
 	});
 </script>
 
-<div class="app max-w-[550px] min-w-[332px] min-h-screen pb-10 mx-auto border-x px-3">
+<div class="app max-w-[550px] min-w-[332px] min-h-screen pb-10 mx-auto border-x px-1">
 	{#if $auth?.isAnonymous === false}
-		<nav class="sticky text-4xl top-0 bg-white w-full h-16 border-b mb-5 py-2 flex justify-between">
+		<nav
+			class="sticky z-10 text-4xl top-0 bg-white w-full h-16 border-b mb-5 py-2 flex justify-between"
+		>
 			<button on:click={() => history.back()}>🔙</button>
 			<a href="/">📃</a>
 			<button on:click={() => history.forward()}>🔜</button>

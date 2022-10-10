@@ -25,27 +25,27 @@
 {#if !team}
 	No such team found
 {:else}
-	<div class="flex justify-between">
+	<div class="flex justify-between text-sm md:text-base">
 		<div class="flex">
 			<img
 				alt={team.name}
 				class="p-1 mx-4 w-14 h-14 rounded-full ring-2 ring-white"
 				src={team.logo}
 			/>
-			<h1 class="text-3xl underline">{team.name}</h1>
-		</div>
-		<div class="text-right">
-			<div class="text-red-700 underline">Match Played: {team.matchesPlayed}</div>
-			<div>TeamID: “{teamID}”</div>
+			<div>
+				<h1 class="text-2xl md:text-3xl">{team.name}</h1>
+				<div class="text-red-700">Match Played: {team.matchesPlayed}</div>
+				<div>TeamID: “{teamID}”</div>
+			</div>
 		</div>
 	</div>
 	<Profile />
 {/if}
-<button
+<!-- <button
 	disabled={loading}
 	on:click={deleteTeam}
 	class="p-3 disabled:opacity-50 disabled:cursor-not-allowed bg-red-700 text-white rounded-lg w-full my-5 text-2xl"
 >
 	{loading ? 'Loading...' : 'Delete'}
 </button>
-<p class="err">{err ?? ''}</p>
+<p class="err">{err ?? ''}</p> -->

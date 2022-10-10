@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { EventPlayer, EventTeam } from './firebase/db';
 	import type { Suggestions } from './utility';
 	export let caption: string;
 	export let suggestions: Suggestions;
@@ -15,42 +14,26 @@
 		id="caption"
 	/>
 	<label for="caption">Suggestions</label>
-	<div
-		class="hide-scroll-bar mt-0.5 border items-start overflow-x-auto overflow-y-hidden rounded flex space-x-2 px-1"
-	>
-		<div class="h-10" />
-		{#if suggestions.type === 'team'}
-			{#each suggestions.suggestion as suggestion}
-				<button
+	{#if !suggestions.suggestion.length}
+		<div class="h-[7.5rem] font-bold text-center pt-[3rem]">No Suggestions</div>
+	{:else}
+		<div class="hide-scroll-bar overflow-x-auto flex h-[7.5rem]">
+			{#each suggestions.type === 'team' ? suggestions.suggestion.map( (x) => ({ setStr: x.setStr, img: x.val.logo, name: x.val.name, isTeam: true }) ) : suggestions.suggestion.map( (x) => ({ setStr: x.setStr, img: x.val.displayImage, name: x.val.name, isTeam: false }) ) as suggestion}
+				<div
 					on:click={function () {
 						caption = suggestion.setStr;
 						textarea.focus();
 					}}
-					class="px-2 whitespace-nowrap h-10 my-1 bg-gray-300 rounded-lg flex items-center"
+					class="flex-none py-6 px-3 first:pl-6 last:pr-6"
 				>
-					<img src={suggestion.val.logo} alt={suggestion.val.name} class="rounded-full h-9" />
-					<span class="ml-1">{suggestion.val.name}</span>
-				</button>
+					<div class="flex flex-col items-center justify-center gap-3">
+						<img src={suggestion.img} alt={suggestion.name} class="w-14 h-14 rounded-full" />
+						<strong class="text-slate-900 text-xs font-medium">{suggestion.name}</strong>
+					</div>
+				</div>
 			{/each}
-		{:else}
-			{#each suggestions.suggestion as suggestion}
-				<button
-					on:click={function () {
-						caption = suggestion.setStr;
-						textarea.focus();
-					}}
-					class="px-2 whitespace-nowrap h-10 my-1 bg-gray-300 rounded-lg flex items-center"
-				>
-					<img
-						src={suggestion.val.displayImage}
-						alt={suggestion.val.name}
-						class="rounded-full h-9"
-					/>
-					<span class="ml-1">{suggestion.val.name}</span>
-				</button>
-			{/each}
-		{/if}
-	</div>
+		</div>
+	{/if}
 	{#if !caption}
 		<p class="err">Enter a Caption</p>
 	{/if}

@@ -23,7 +23,7 @@
 <h1 class="text-3xl mt-2 underline">{fixture.team1.name}</h1>
 <div class="flex text-xl items-center justify-between mt-5">
 	<button disabled={loading || !team1score} on:click={() => setScore(1, -1)}>
-		{loading ? 'Loading...' : '-1'}
+		{loading ? '-1...' : ' -1 '}
 	</button>
 	<div class="text-center">
 		<div>Current Score</div>
@@ -34,14 +34,14 @@
 		</div>
 	</div>
 	<button disabled={loading} on:click={() => setScore(1, 1)}>
-		{loading ? 'Loading...' : '+1'}
+		{loading ? '+1...' : ' +1 '}
 	</button>
 </div>
 
 <h1 class="text-3xl mt-2 underline">{fixture.team2.name}</h1>
 <div class="flex text-xl items-center justify-between mt-5">
 	<button disabled={!team2score || loading} on:click={() => setScore(2, -1)}>
-		{loading ? 'Loading...' : '-1'}
+		{loading ? '-1...' : ' -1 '}
 	</button>
 	<div class="text-center">
 		<div>Current Score</div>
@@ -52,7 +52,7 @@
 		</div>
 	</div>
 	<button disabled={loading} on:click={() => setScore(2, 1)}>
-		{loading ? 'Loading...' : '+1'}
+		{loading ? '+1...' : ' +1 '}
 	</button>
 </div>
 

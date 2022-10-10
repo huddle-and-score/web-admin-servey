@@ -27,7 +27,7 @@
 {:else if !fixture}
 	No such Fixture found
 {:else}
-	<div class="flex justify-between">
+	<div class="flex justify-between text-sm md:text-base">
 		<div class="flex">
 			<img
 				alt={player.name}
@@ -35,18 +35,16 @@
 				src={player.displayImage}
 			/>
 			<div>
-				<h1 class="text-3xl">{player.name}</h1>
+				<h1 class="text-2xl md:text-3xl">{player.name}</h1>
 				<span>
 					Team:
 					<a href="/teams/{player.teamID}" class="text-pink-500 underline font-bold">
 						{player.team.name}
 					</a>
 				</span>
+				<div class="text-red-700">Match Played: {player.matchesPlayed}</div>
+				<div>PlayerID: “{playerID}”</div>
 			</div>
-		</div>
-		<div class="text-right">
-			<div class="text-red-700 underline">Match Played: {player.matchesPlayed}</div>
-			<div>PlayerID: “{playerID}”</div>
 		</div>
 	</div>
 	<Stats />

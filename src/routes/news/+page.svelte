@@ -23,15 +23,15 @@
 					<span>{val.text}</span>
 				{:else if val.type === 'player'}
 					<span />
-					<a href="/players/{val.playerID}" class="underline text-pink-700">
+					<span class="text-pink-700">
 						@{$event.players[val.playerID]?.jerseyNum ?? val.playerID}
-					</a>
+					</span>
 					<span />
 				{:else}
 					<span />
-					<a href="/teams/{val.teamID}" class="underline text-pink-700">
+					<span class="text-pink-700">
 						#{$event.teams[val.teamID]?.acronym ?? val.teamID}
-					</a>
+					</span>
 					<span />
 				{/if}
 			{/each}

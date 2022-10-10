@@ -16,22 +16,33 @@
 		href="/videos/{video.id}"
 		class="w-full h-20 flex cursor-pointer mt-3 border border-gray-700 rounded-xl p-3 text-xl overflow-hidden"
 	>
-		{#each video.content as val}
-			{#if val.type === 'text'}
-				<span>{val.text}</span>
-			{:else if val.type === 'player'}
-				<span />
-				<a href="/players/{val.playerID}" class="underline text-pink-700">
-					@{$event.players[val.playerID]?.jerseyNum ?? val.playerID}
-				</a>
-				<span />
-			{:else}
-				<span />
-				<a href="/teams/{val.teamID}" class="underline text-pink-700">
-					#{$event.teams[val.teamID]?.acronym ?? val.teamID}
-				</a>
-				<span />
-			{/if}
-		{/each}
+		<video
+			alt={video.id}
+			class="p-1 mx-4 w-14 h-14 ring-2 ring-white"
+			src={video.video}
+			controls={false}
+			autoPlay={false}
+		>
+			<track kind="captions" />
+		</video>
+		<div>
+			{#each video.content as val}
+				{#if val.type === 'text'}
+					<span>{val.text}</span>
+				{:else if val.type === 'player'}
+					<span />
+					<span class="text-pink-700">
+						@{$event.players[val.playerID]?.jerseyNum ?? val.playerID}
+					</span>
+					<span />
+				{:else}
+					<span />
+					<span class="text-pink-700">
+						#{$event.teams[val.teamID]?.acronym ?? val.teamID}
+					</span>
+					<span />
+				{/if}
+			{/each}
+		</div>
 	</a>
 {/each}

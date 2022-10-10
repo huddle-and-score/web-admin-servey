@@ -25,7 +25,7 @@
 {#if !video}
 	No such Video found
 {:else}
-	<video src={video.video} controls autoPlay class="">
+	<video src={video.video} controls autoPlay class="h-52 w-full m-auto">
 		<track kind="captions" />
 	</video>
 	<p>

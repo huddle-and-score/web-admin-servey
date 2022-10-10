@@ -5,6 +5,7 @@
 	import { getBeforeContent, getSuggestionsInContent } from '$lib/utility';
 	import { onMount } from 'svelte';
 	import Caption from '$lib/Caption.svelte';
+	import Connections from '$lib/Connections.svelte';
 
 	$: newsID = $page.params.newsID;
 	$: news = $newsStore.find((x) => x.id === newsID)!;
@@ -79,50 +80,4 @@
 	</div>
 	<button disabled={!ok} type="submit"> {loading ? 'Loading...' : 'Submit'} </button>
 </form>
-{#each connection as val}
-	{#if val.type === 'player'}
-		<a
-			href="/players/{val.player.id}"
-			class="w-full h-20 flex cursor-pointer mt-3 border border-gray-700 rounded-xl p-3 text-xl"
-		>
-			<div class="w-2 h-20 -mt-3" style="background-color: {val.player.team.color}" />
-			<img
-				alt={val.player.name}
-				class="p-1 mx-4 w-14 h-14 rounded-full ring-2 ring-white"
-				src={val.player.displayImage}
-			/>
-			<div class="flex justify-between w-full">
-				<div>
-					<span class="block">
-						{val.player.name}
-					</span>
-					<span class="block">
-						{val.player.team.acronym}
-					</span>
-				</div>
-			</div>
-		</a>
-	{:else if val.type === 'team'}
-		<a
-			href="/teams/{val.team.id}"
-			class="w-full h-20 flex cursor-pointer mt-3 border border-gray-700 rounded-xl p-3 text-xl"
-		>
-			<div class="w-2 h-20 -mt-3" style="background-color: {val.team.color}" />
-			<img
-				alt={val.team.name}
-				class="p-1 mx-4 w-14 h-14 rounded-full ring-2 ring-white"
-				src={val.team.logo}
-			/>
-			<div class="flex justify-between w-full">
-				<div>
-					<span class="block">
-						{val.team.name}
-					</span>
-					<span class="block">
-						{val.team.acronym}
-					</span>
-				</div>
-			</div>
-		</a>
-	{/if}
-{/each}
+<Connections {connection} />

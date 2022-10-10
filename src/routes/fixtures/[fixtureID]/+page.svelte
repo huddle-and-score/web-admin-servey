@@ -26,7 +26,30 @@
 {#if !fixture}
 	No such fixture found
 {:else}
-	<div class="w-full h-20 flex justify-between mt-3 border border-gray-700 rounded-xl px-3 text-xl">
+	<div class="flex py-0.5 border-y bg-base2 mt-5 page-padding">
+		<div
+			style="width: 9.81px; background-color: {fixture.team1
+				.color}; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);"
+		/>
+		<div class="w-full text-xl items-center flex justify-around pb-4 pt-5 font-medium">
+			<span>{fixture.team1.acronym}</span>
+			<a href="/teams/{fixture.team1ID}"
+				><img src={fixture.team1.logo} alt={fixture.team1.name} class="w-9 h-10" /></a
+			>
+			<span class="whitespace-nowrap">
+				{fixture.scores?.team1 ?? 0} - {fixture.scores?.team2 ?? 0}
+			</span>
+			<a href="/teams/{fixture.team2ID}"
+				><img src={fixture.team2.logo} alt={fixture.team1.name} class="w-9 h-10" /></a
+			>
+			<span>{fixture.team2.acronym}</span>
+		</div>
+		<div
+			style="width: 9.81px; background-color: {fixture.team2
+				.color}; box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);"
+		/>
+	</div>
+	<!-- <div class="w-full h-20 flex justify-between mt-3 border border-gray-700 rounded-xl px-3 text-xl">
 		<a
 			href="/teams/{fixture.team1ID}"
 			class="flex border-l-8 py-3"
@@ -67,7 +90,7 @@
 				src={fixture.team2.logo}
 			/>
 		</a>
-	</div>
+	</div> -->
 	<Scores />
 	<SetTime />
 	<p class="err">{err ?? ''}</p>

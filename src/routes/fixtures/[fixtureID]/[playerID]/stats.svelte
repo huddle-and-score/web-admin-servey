@@ -134,7 +134,7 @@
 	</div>
 	<div class="field max-w-[18rem]">
 		<label for="tackles" class="capitalize flex justify-between">
-			<span>tackles</span>
+			<span>tackles | intercept | block</span>
 		</label>
 		<input bind:value={tackles} id="tackles" />
 		{#if !isInt.test(tackles)}
