@@ -161,7 +161,7 @@
 	</div>
 	<div class="field max-w-[18rem]">
 		<label for="yellowCard" class="capitalize flex justify-between">
-			<span>yellowCard</span>
+			<span>yellow Card</span>
 		</label>
 		<input bind:value={yellowCard} id="yellowCard" />
 		{#if !isInt.test(yellowCard)}
@@ -170,7 +170,7 @@
 	</div>
 	<div class="field max-w-[18rem]">
 		<label for="redCard" class="capitalize flex justify-between">
-			<span>redCard</span>
+			<span>red Card</span>
 		</label>
 		<input bind:value={redCard} id="redCard" />
 		{#if !isInt.test(redCard)}
@@ -180,7 +180,7 @@
 	{#if player.isGoalkeeper}
 		<div class="field max-w-[18rem]">
 			<label for="goalConceived" class="capitalize flex justify-between">
-				<span>goalConceived</span>
+				<span>goal conceded</span>
 			</label>
 			<input bind:value={goalConceived} id="goalConceived" />
 			{#if !isInt.test(goalConceived)}
@@ -189,7 +189,7 @@
 		</div>
 		<div class="field max-w-[18rem]">
 			<label for="goalSaved" class="capitalize flex justify-between">
-				<span>goalSaved</span>
+				<span>goal Saved</span>
 			</label>
 			<input bind:value={goalSaved} id="goalSaved" />
 			{#if !isInt.test(goalSaved)}
