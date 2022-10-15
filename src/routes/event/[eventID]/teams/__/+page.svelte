@@ -33,7 +33,7 @@
 				teamChemistry,
 				acronym: acronym.toLocaleUpperCase()
 			});
-			await goto('/teams/' + teamID);
+			await goto('/event/' + $page.params.eventID + '/teams/' + teamID);
 		} catch (e) {
 			err = e;
 			console.error(e);

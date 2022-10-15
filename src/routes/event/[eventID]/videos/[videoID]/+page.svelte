@@ -14,7 +14,7 @@
 			return;
 		try {
 			await setVideo($page.params.eventID, videoID, null);
-			goto('/videos');
+			goto('/event/' + $page.params.eventID +'/videos');
 		} catch (e) {
 			err = e;
 			console.log(e);

@@ -14,7 +14,7 @@
 			return;
 		try {
 			await setTeam($page.params.eventID, teamID, null);
-			goto('/teams');
+			goto('/event/' + $page.params.eventID + '/teams');
 		} catch (e) {
 			err = e;
 			console.log(e);

@@ -28,7 +28,7 @@
 				team2ID,
 				time
 			});
-			await goto('/fixtures');
+			await goto('/event/' + $page.params.eventID + '/fixtures');
 		} catch (e) {
 			err = e;
 			console.error(e);

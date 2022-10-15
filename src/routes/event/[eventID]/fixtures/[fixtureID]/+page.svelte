@@ -15,7 +15,7 @@
 			return;
 		try {
 			await setFixture($page.params.eventID, fixtureID, null);
-			goto('/fixtures');
+			goto('/event/' + $page.params.eventID +'/fixtures');
 		} catch (e) {
 			err = e;
 			console.log(e);

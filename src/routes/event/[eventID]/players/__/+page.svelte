@@ -42,7 +42,7 @@
 				instagramUsername,
 				place
 			});
-			await goto('/players/' + playerID);
+			await goto('/event/' + $page.params.eventID + '/players/' + playerID);
 		} catch (e) {
 			err = e;
 			console.error(e);

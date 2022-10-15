@@ -14,7 +14,7 @@
 			return;
 		try {
 			await setPlayer($page.params.eventID, playerID, null);
-			goto('/players');
+			goto('/event/' + $page.params.eventID + '/players');
 		} catch (e) {
 			err = e;
 			console.log(e);

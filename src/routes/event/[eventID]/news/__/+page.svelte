@@ -34,7 +34,7 @@
 					.map((x) => (x.type === 'player' ? x.player.id : x.type === 'team' ? x.team.id : '')),
 				image: image[0]
 			});
-			goto('/news/' + newsID);
+			goto('/event/' + $page.params.eventID +'/news/' + newsID);
 		} catch (e) {
 			err = e;
 			console.error(e);

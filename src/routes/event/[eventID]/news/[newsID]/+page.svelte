@@ -14,7 +14,7 @@
 			return;
 		try {
 			await setNews($page.params.eventID, newsID, null);
-			goto('/news');
+			goto('/event/' + $page.params.eventID +'/news');
 		} catch (e) {
 			err = e;
 			console.log(e);
