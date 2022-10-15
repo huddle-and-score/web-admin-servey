@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { beforeContent } from './utility';
+	import { page } from '$app/stores';
 
 	export let connection: beforeContent;
 </script>
@@ -8,7 +9,7 @@
 	{#if val.type === 'player'}
 		{#if !connection.slice(0, i).some((x) => x.type === 'player' && x.player.id === val.player.id)}
 			<a
-				href="/players/{val.player.id}"
+				href="/event/{$page.params.eventID}/players/{val.player.id}"
 				class="w-full h-20 flex cursor-pointer mt-3 border border-gray-700 rounded-xl p-3 text-xl"
 			>
 				<div class="w-2 h-20 -mt-3" style="background-color: {val.player.team.color}" />
@@ -32,7 +33,7 @@
 	{:else if val.type === 'team'}
 		{#if !connection.slice(0, i).some((x) => x.type === 'team' && x.team.id === val.team.id)}
 			<a
-				href="/teams/{val.team.id}"
+				href="/event/{$page.params.eventID}/teams/{val.team.id}"
 				class="w-full h-20 flex cursor-pointer mt-3 border border-gray-700 rounded-xl p-3 text-xl"
 			>
 				<div class="w-2 h-20 -mt-3" style="background-color: {val.team.color}" />

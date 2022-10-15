@@ -1,12 +1,8 @@
 <h1 class="text-3xl font-bold underline">Huddle and Score Admin Site</h1>
 
 <ul>
-	<li><a href="/live">🔴 Live</a></li>
-	<li><a href="/teams">👥 Teams</a></li>
-	<li><a href="/players">👤 Player</a></li>
-	<li><a href="/fixtures">⚽ Fixture</a></li>
-	<li><a href="/news">📰 News</a></li>
-	<li><a href="/videos">📹 Videos</a></li>
+	<li><a href="/event">⚽ Events</a></li>
+	<li><a href="/forms">📄 Forms</a></li>
 </ul>
 
 <style>
