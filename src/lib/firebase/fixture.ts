@@ -164,7 +164,7 @@ export async function setFixture(
 					fixture.time = data;
 				}
 			}
-			data = fixture;
+			if (data) data = fixture;
 		}
 		transaction.update(eventRef, {
 			['fixtures.' + fixtureID]: data ? fixtureToString(data as Fixture) : deleteField()

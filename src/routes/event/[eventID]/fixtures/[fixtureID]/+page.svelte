@@ -13,12 +13,14 @@
 	async function deleteFixture() {
 		if (!confirm('Are you sure, this will delete the object. Once deleted cant be recovered'))
 			return;
+		loading = true;
 		try {
 			await setFixture($page.params.eventID, fixtureID, null);
-			goto('/event/' + $page.params.eventID +'/fixtures');
+			goto('/event/' + $page.params.eventID + '/fixtures');
 		} catch (e) {
 			err = e;
 			console.log(e);
+			loading = false;
 		}
 	}
 </script>
