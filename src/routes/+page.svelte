@@ -1,9 +1,20 @@
+<script>
+	import { signOut } from 'firebase/auth';
+	import { getFirebase } from '$lib/firebase/firebase';
+</script>
+
 <h1 class="text-3xl font-bold underline">Huddle and Score Admin Site</h1>
 
 <ul>
 	<li><a href="/event">⚽ Events</a></li>
 	<li><a href="/forms">📄 Forms</a></li>
 </ul>
+<button
+	class="bg-red-500 mt-72 text-white w-full py-2"
+	on:click={() => signOut(getFirebase().auth)}
+>
+	Logout
+</button>
 
 <style>
 	ul {
