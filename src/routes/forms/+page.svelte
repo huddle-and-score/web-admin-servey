@@ -18,9 +18,11 @@
 				await uploadBytes(posterRef, poster[0]);
 				image = await getDownloadURL(posterRef);
 			}
-			updateDoc(configRef, {
+			await updateDoc(configRef, {
 				['forms.' + formID + '.title']: title,
 				['forms.' + formID + '.url']: url,
+
+				['forms.' + formID + '.consent']: consent,
 				...(image ? { ['forms.' + formID + '.poster']: image } : {})
 			});
 			edit = undefined;
@@ -34,6 +36,7 @@
 	let title = '';
 	let poster: FileList | undefined;
 	let url = '';
+	let consent = '';
 	async function deleteForm(formID: string) {
 		const firebase = getFirebase();
 		loading = true;
@@ -73,7 +76,14 @@
 		</div>
 		<div class="field">
 			<label for="url">Form Url</label>
-			<input type="url" bind:value={url} id="url" />
+			<input required type="url" bind:value={url} id="url" />
+		</div>
+		<div class="field">
+			<label for="consent">Consent Form</label>
+			<textarea bind:value={consent} id="consent" />
+			{#if !title}
+				<p class="err">Enter a consent</p>
+			{/if}
 		</div>
 		<div class="flex justify-around">
 			<button
@@ -83,7 +93,10 @@
 			>
 				Cancle
 			</button>
-			<button type="submit" disabled={!url || !title || loading || !poster || poster.length !== 1}>
+			<button
+				type="submit"
+				disabled={!url || !title || !consent || loading || !poster || poster.length !== 1}
+			>
 				Submit
 			</button>
 		</div>
@@ -98,6 +111,7 @@
 			poster = undefined;
 			id = '';
 			edit = undefined;
+			consent = '';
 			newForm = true;
 		}}
 	>
@@ -118,6 +132,7 @@
 								title = form.title;
 								poster = undefined;
 								url = form.url;
+								consent = form.consent;
 								edit = formID;
 							}}
 							class="text-sm text-pink-500 block font-medium underline text-right w-full"
@@ -149,6 +164,13 @@
 						<label for="url">Form Url</label>
 						<input type="url" bind:value={url} id="url" />
 					</div>
+					<div class="field">
+						<label for="consent">Consent Form</label>
+						<textarea bind:value={consent} id="consent" />
+						{#if !title}
+							<p class="err">Enter a consent</p>
+						{/if}
+					</div>
 					<div class="flex justify-around">
 						<button
 							on:click={() => (edit = undefined)}
@@ -168,8 +190,12 @@
 							type="submit"
 							disabled={!url ||
 								!title ||
+								!consent ||
 								loading ||
-								(title === form.title && url === form.url && (!poster || poster.length !== 1))}
+								(title === form.title &&
+									url === form.url &&
+									consent == form.consent &&
+									(!poster || poster.length !== 1))}
 						>
 							Submit
 						</button>
