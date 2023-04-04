@@ -3,7 +3,7 @@
 	import { getFirebase } from '$lib/firebase/firebase';
 </script>
 
-<h1 class="text-3xl font-bold underline">Huddle and Score Admin Site</h1>
+<h1 class="text-3xl font-bold underline">Play Pro Admin Site</h1>
 
 <ul>
 	<li><a href="/event">⚽ Events</a></li>

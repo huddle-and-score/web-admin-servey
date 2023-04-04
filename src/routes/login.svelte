@@ -17,7 +17,7 @@
 	}
 </script>
 
-<h1 class="pt-3 text-3xl underline">Huddle And Score Admin Site</h1>
+<h1 class="pt-3 text-3xl underline">Play Pro Admin Site</h1>
 
 <form on:submit|preventDefault={logIn}>
 	<div class="field">
